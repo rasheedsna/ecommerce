@@ -87,7 +87,7 @@ class Product(models.Model):
     originalPrice = models.DecimalField(max_digits=10, decimal_places=2)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     flashSale = models.BooleanField(default=False, )
-    slug = models.SlugField(max_length=200, unique=True, blank=True)
+    slug = models.SlugField(max_length=200, unique=True)
     unit = models.TextField(max_length=50, blank=True)
 
     def save(self, *args, **kwargs):
