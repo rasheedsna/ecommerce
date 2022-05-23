@@ -18,7 +18,7 @@ class SubCategorySerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    children = serializers.StringRelatedField(many=True)
+    children = serializers.StringRelatedField(many=True, allow_null=True)
 
     class Meta:
         model = Category
@@ -28,6 +28,20 @@ class CategorySerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response['type'] = TypeSerializer(instance.type).data['type']
         return response
+
+    def create(self, validated_data):
+        parent = validated_data['parent']
+        icon = validated_data['icon']
+        product_type = Type.objects.get(type=validated_data['type'])
+
+        category = Category.objects.create(
+            parent=parent,
+            icon=icon,
+            type=product_type,
+        )
+        category.save()
+
+        return category
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -41,4 +55,5 @@ class ProductSerializer(serializers.ModelSerializer):
         response['parent'] = CategorySerializer(instance.parent).data['parent']
         response['type'] = TypeSerializer(instance.parent.type).data['type']
         return response
+
     # def create(self, validated_data):

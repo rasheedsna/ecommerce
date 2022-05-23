@@ -77,6 +77,7 @@ class Product(models.Model):
     image = models.ImageField(upload_to='product', blank=True)
     parent = models.ForeignKey(Category, on_delete=models.CASCADE)
     children = models.ForeignKey(SubCategory, on_delete=models.CASCADE, blank=True)
+    SKU = models.CharField(max_length=50, blank=True, null=True)
     # type = models.ForeignKey(Type, on_delete=models.CASCADE)
     # tags = models.ForeignKey(Tag, on_delete=models.CASCADE)
     createdAt = models.DateTimeField(auto_now_add=True)
@@ -88,7 +89,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     flashSale = models.BooleanField(default=False, )
     slug = models.SlugField(max_length=200, unique=True)
-    unit = models.TextField(max_length=50, blank=True)
+    unit = models.CharField(max_length=50, blank=True)
 
     def save(self, *args, **kwargs):
         if self.slug:  # edit

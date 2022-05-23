@@ -6,12 +6,25 @@ from . models import Category, Product
 from . serializers import ProductSerializer, CategorySerializer
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def all_categories(request):
+    categories = Category.objects.all()
     if request.method == 'GET':
-        categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'POST':
+        # data = request.data
+        # icon = request.FILES['icon']
+        # data['icon'] = icon
+
+        serializer = CategorySerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
