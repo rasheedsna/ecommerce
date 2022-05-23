@@ -29,7 +29,10 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'ecom-cybero-api.herokuapp.com',
+]
 
 
 # Application definition
@@ -47,6 +50,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -130,11 +135,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATICFILES_DIRS = ['static']
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
 STATIC_URL = 'static/'
-MEDIA_URL = 'media/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = 'static/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/assets')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
