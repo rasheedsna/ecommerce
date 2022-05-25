@@ -13,8 +13,8 @@ class SubCategorySerializer(serializers.ModelSerializer):
         model = SubCategory
         fields = '__all__'
 
-    def to_representation(self, instance):
-        return '%s' % instance.children
+    # def to_representation(self, instance):
+    #     return '%s' % instance.children
 
 
 class ChildrenListingField(serializers.RelatedField):
