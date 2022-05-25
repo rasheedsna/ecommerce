@@ -33,7 +33,6 @@ class CategorySerializer(serializers.ModelSerializer):
         parent = validated_data['parent']
         icon = validated_data['icon']
         product_type = Type.objects.get(type=validated_data['type'])
-
         category = Category.objects.create(
             parent=parent,
             icon=icon,
