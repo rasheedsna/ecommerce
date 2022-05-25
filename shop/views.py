@@ -14,10 +14,6 @@ def all_categories(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     if request.method == 'POST':
-        # data = request.data
-        # icon = request.FILES['icon']
-        # data['icon'] = icon
-
         serializer = CategorySerializer(data=request.data)
 
         if serializer.is_valid():
