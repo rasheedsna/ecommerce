@@ -82,7 +82,7 @@ class Product(models.Model):
     # tags = models.ForeignKey(Tag, on_delete=models.CASCADE)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=4, choices=STATUS_CHOICES, default='SHOW',)
+    status = models.CharField(max_length=4, choices=STATUS_CHOICES, default='Show',)
     quantity = models.IntegerField()
     popular = models.BooleanField(default=False,)
     originalPrice = models.DecimalField(max_digits=10, decimal_places=2)
@@ -110,7 +110,7 @@ class Product(models.Model):
 
 class Tag(models.Model):
     tag = models.CharField(max_length=100)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='tag')
 
     class Meta:
         ordering = ('tag',)
