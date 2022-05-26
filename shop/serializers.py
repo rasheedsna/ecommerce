@@ -26,7 +26,6 @@ class ChildrenListingField(serializers.RelatedField):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    # children = serializers.StringRelatedField(many=True, allow_null=True)
     children = ChildrenListingField(many=True, queryset=Category.objects.all())
 
     class Meta:

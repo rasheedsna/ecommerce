@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'shop',
-    'rest_framework',
+    'accounts',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -81,6 +82,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecom_backend.wsgi.application'
 
+AUTH_USER_MODEL = 'accounts.UserProfile'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -125,7 +127,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
