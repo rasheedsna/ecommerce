@@ -38,10 +38,13 @@ class CategorySerializer(serializers.ModelSerializer):
         response['type'] = TypeSerializer(instance.type).data['type']
         return response
 
+    def to_internal_value(self, data):
+        return data
+
     def create(self, validated_data):
         parent = validated_data.get('parent')
         icon = validated_data.get('icon')
-        product_type = Type.objects.get(type=validated_data['type'])
+        product_type = Type.objects.get(id=validated_data['type'])
         children = validated_data.get('children')
 
         category = Category.objects.create(
@@ -81,12 +84,16 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
-        # response['children'] = SubCategorySerializer(instance.children).data['children']
-        # response['parent'] = CategorySerializer(instance.parent).data['parent']
+        response['children'] = SubCategorySerializer(instance.children).data['children']
+        response['parent'] = CategorySerializer(instance.parent).data['parent']
         response['type'] = TypeSerializer(instance.parent.type).data['type']
         return response
 
+    def to_internal_value(self, data):
+        return data
+
     def create(self, validated_data):
+        print(validated_data)
         title = validated_data.get('title')
         description = validated_data.get('description')
         image = validated_data.get('image')
