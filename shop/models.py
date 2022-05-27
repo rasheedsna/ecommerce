@@ -72,7 +72,7 @@ class Product(models.Model):
     ]
 
     _id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.CharField(max_length=50, unique=True)
+    title = models.CharField(max_length=50)
     description = models.TextField(max_length=250, blank=True)
     image = models.ImageField(upload_to='product', blank=True)
     parent = models.ForeignKey(Category, on_delete=models.CASCADE)

@@ -1,9 +1,9 @@
 from django.contrib import admin
-from . models import UserProfile, Roll
+from . models import UserProfile, Role
 
 
 admin.site.register(UserProfile)
-admin.site.register(Roll)
+admin.site.register(Role)
 
 
 

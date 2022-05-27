@@ -5,11 +5,11 @@ from django.db import models
 from django.utils import timezone
 
 
-class Roll(models.Model):
-    roll = models.CharField(max_length=100)
+class Role(models.Model):
+    role = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.roll
+        return self.role
 
 
 class UserManager(BaseUserManager):
@@ -31,7 +31,6 @@ class UserManager(BaseUserManager):
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):
     _id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    # username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=250, unique=True, null=True, blank=True)
     name = models.CharField(max_length=200)
     is_active = models.BooleanField(default=False)
@@ -43,7 +42,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     createdAt = models.DateTimeField(auto_now_add=True)
     joiningDate = models.DateTimeField(blank=True, null=True)
     address = models.CharField(max_length=250, blank=True, null=True)
-    role = models.ForeignKey(Roll, on_delete=models.CASCADE, null=True, blank=True)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE, related_name='users', null=True, blank=True)
 
     objects = UserManager()
 
