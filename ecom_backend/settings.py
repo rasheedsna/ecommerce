@@ -84,6 +84,14 @@ WSGI_APPLICATION = 'ecom_backend.wsgi.application'
 
 AUTH_USER_MODEL = 'accounts.UserProfile'
 
+REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        # 'rest_framework.parsers.FormParser',
+        # 'rest_framework.parsers.MultiPartParser'
+    ]
+}
+
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 

@@ -110,7 +110,7 @@ class Product(models.Model):
 
 class Tag(models.Model):
     tag = models.CharField(max_length=100)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='tag')
+    product = models.ManyToManyField(Product, related_name='tags')
 
     class Meta:
         ordering = ('tag',)

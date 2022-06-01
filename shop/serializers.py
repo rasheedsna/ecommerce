@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 from .models import Category, Product, SubCategory, Type, Tag
 
@@ -37,13 +38,14 @@ class CategorySerializer(serializers.ModelSerializer):
         response['type'] = TypeSerializer(instance.type).data['type']
         return response
 
-    def to_internal_value(self, data):
-        return data
+    # def to_internal_value(self, data):
+    #     return data
 
     def create(self, validated_data):
+        print(validated_data)
         parent = validated_data.get('parent')
         icon = validated_data.get('icon')
-        product_type = Type.objects.get(id=validated_data['type'])
+        product_type = validated_data.get('type')
         children = validated_data.get('children')
 
         category = Category.objects.create(
@@ -53,15 +55,34 @@ class CategorySerializer(serializers.ModelSerializer):
         )
         category.save()
 
-        parent_for_sub_category = category
         for item in children:
             sub_category = SubCategory.objects.create(
                 children=item,
-                parent=parent_for_sub_category,
+                parent=category,
             )
             sub_category.save()
 
         return category
+
+    def update(self, instance, validated_data):
+        instance.parent = validated_data.get('parent', instance.parent)
+        instance.icon = validated_data.get('icon', instance.icon)
+        instance.type = validated_data.get('type', instance.type)
+        instance.save()
+
+        children = validated_data.get('children')
+        if children is not None:
+            sub_categories = SubCategory.objects.filter(parent=instance)
+            for sub_cat in sub_categories:
+                sub_cat.delete()
+            for item in children:
+                sub_category = SubCategory.objects.create(
+                    children=item,
+                    parent=instance,
+                )
+                sub_category.save()
+
+        return instance
 
 
 class TagListingField(serializers.RelatedField):
@@ -73,13 +94,14 @@ class TagListingField(serializers.RelatedField):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(allow_empty_file=True, allow_null=True, required=False)
     slug = serializers.SlugField(allow_unicode=False, max_length=200, read_only=True)
-    tag = TagListingField(many=True, queryset=Tag.objects.all())
+    tags = TagListingField(many=True, queryset=Tag.objects.all())
 
     class Meta:
         model = Product
         fields = ['_id', 'title', 'description', 'image', 'SKU', 'createdAt', 'updatedAt', 'status', 'quantity',
-                  'originalPrice', 'price', 'slug', 'unit', 'parent', 'children', 'tag']
+                  'originalPrice', 'price', 'slug', 'unit', 'parent', 'children', 'tags']
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
@@ -88,10 +110,12 @@ class ProductSerializer(serializers.ModelSerializer):
         response['type'] = TypeSerializer(instance.parent.type).data['type']
         return response
 
-    def to_internal_value(self, data):
-        return data
+    # def to_internal_value(self, data):
+    #     return super().to_internal_value(data)
 
     def create(self, validated_data):
+        print(validated_data)
+        print(validated_data.get('parent'))
         title = validated_data.get('title')
         description = validated_data.get('description')
         image = validated_data.get('image')
@@ -100,9 +124,9 @@ class ProductSerializer(serializers.ModelSerializer):
         unit = validated_data.get('unit')
         price = validated_data.get('price')
         original_price = validated_data.get('originalPrice')
-        parent = Category.objects.get(_id=validated_data.get('parent'))
-        children = SubCategory.objects.get(pk=validated_data.get('children'))
-        tags = validated_data.get('tag')
+        parent = validated_data.get('parent')
+        children = validated_data.get('children')
+        tags = validated_data.get('tags')
 
         product = Product.objects.create(
             title=title,
@@ -118,12 +142,43 @@ class ProductSerializer(serializers.ModelSerializer):
         )
         product.save()
 
-        product_for_tag = product
-        for item in tags:
-            tag = Tag.objects.create(
-                tag=item,
-                product=product_for_tag,
-            )
-            tag.save()
+        if tags is not None:
+            for item in tags:
+                if Tag.objects.filter(tag=item).exists():
+                    tag = Tag.objects.get(tag=item)
+                    tag.product.add(product)
+                else:
+                    tag = Tag.objects.create(
+                        tag=item,
+                    )
+                    tag.save()
+                    tag.product.add(product)
 
         return product
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.image = validated_data.get('image', instance.image)
+        instance.SKU = validated_data.get('SKU', instance.SKU)
+        instance.quantity = validated_data.get('quantity', instance.quantity)
+        instance.originalPrice = validated_data.get('originalPrice', instance.originalPrice)
+        instance.price = validated_data.get('price', instance.price)
+        instance.unit = validated_data.get('unit', instance.unit)
+        instance.children = validated_data.get('children', instance.children)
+        instance.parent = validated_data.get('parent', instance.parent)
+        instance.save()
+
+        tags = validated_data.get('tags')
+
+        for item in tags:
+            if Tag.objects.filter(tag=item).exists():
+                tag = Tag.objects.get(tag=item)
+                tag.product.add(instance)
+            else:
+                tag = Tag.objects.create(
+                    tag=item,
+                )
+            tag.save()
+            tag.product.add(instance)
+        return instance
