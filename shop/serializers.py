@@ -114,8 +114,6 @@ class ProductSerializer(serializers.ModelSerializer):
     #     return super().to_internal_value(data)
 
     def create(self, validated_data):
-        print(validated_data)
-        print(validated_data.get('parent'))
         title = validated_data.get('title')
         description = validated_data.get('description')
         image = validated_data.get('image')

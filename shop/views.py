@@ -48,7 +48,6 @@ def edit_categories(request, category_id):
 
 
 @api_view(['GET', 'POST'])
-@parser_classes([MultiPartParser])
 def all_products(request):
     if request.method == 'GET':
         products = Product.objects.all()
@@ -66,7 +65,6 @@ def all_products(request):
 
 
 @api_view(['PATCH', 'GET', 'DELETE'])
-@parser_classes([MultiPartParser])
 def edit_products(request, product_id):
     if request.method == 'GET':
         product = Product.objects.get(_id=product_id)
