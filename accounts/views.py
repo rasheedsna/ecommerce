@@ -25,13 +25,13 @@ def user_accounts(request):
 @api_view(['PATCH', 'GET'])
 def edit_user_accounts(request, user_id):
     if request.method == 'GET':
-        users = UserProfile.objects.get(_id=user_id)
-        serializer = UserProfileSerializer(users)
+        user = UserProfile.objects.get(_id=user_id, is_staff=False)
+        serializer = UserProfileSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     if request.method == 'PATCH':
-        users = UserProfile.objects.get(_id=user_id)
-        serializer = UserProfileSerializer(users, data=request.data, partial=True)
+        user = UserProfile.objects.get(_id=user_id)
+        serializer = UserProfileSerializer(user, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -57,11 +57,16 @@ def admin_accounts(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['PATCH'])
+@api_view(['GET', 'PATCH'])
 def edit_admin_accounts(request, user_id):
+    if request.method == 'GET':
+        user = UserProfile.objects.get(_id=user_id, is_staff=True)
+        serializer = AdminUserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     if request.method == 'PATCH':
-        users = UserProfile.objects.filter(_id=user_id, is_staff=True)
-        serializer = AdminUserSerializer(users, data=request.data, partial=True)
+        user = UserProfile.objects.get(_id=user_id, is_staff=True)
+        serializer = AdminUserSerializer(user, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -73,7 +78,6 @@ def edit_admin_accounts(request, user_id):
 @api_view(['POST'])
 def login(request):
     if request.method == 'POST':
-        print(request.data)
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.data.get('user')

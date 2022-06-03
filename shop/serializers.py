@@ -14,9 +14,6 @@ class SubCategorySerializer(serializers.ModelSerializer):
         model = SubCategory
         fields = '__all__'
 
-    # def to_representation(self, instance):
-    #     return '%s' % instance.children
-
 
 class ChildrenListingField(serializers.RelatedField):
     def to_representation(self, instance):
@@ -37,9 +34,6 @@ class CategorySerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response['type'] = TypeSerializer(instance.type).data['type']
         return response
-
-    # def to_internal_value(self, data):
-    #     return data
 
     def create(self, validated_data):
         print(validated_data)
@@ -109,9 +103,6 @@ class ProductSerializer(serializers.ModelSerializer):
         response['parent'] = CategorySerializer(instance.parent).data['parent']
         response['type'] = TypeSerializer(instance.parent.type).data['type']
         return response
-
-    # def to_internal_value(self, data):
-    #     return super().to_internal_value(data)
 
     def create(self, validated_data):
         title = validated_data.get('title')

@@ -21,9 +21,20 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
         return user
 
-    # def update(self, instance, validated_data):
-    #     instance.address = validated_data.get('address')
-    #     return instance
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.email = validated_data.get('email', instance.email)
+        instance.image = validated_data.get('image', instance.image)
+        instance.address = validated_data.get('address', instance.address)
+
+        # password = validated_data.get('password')
+        #
+        # if password is not None:
+        #     instance.set_password(password)
+        instance.save()
+
+        return instance
 
 
 class AdminRoleSerializer(serializers.ModelSerializer):
@@ -44,10 +55,43 @@ class AdminUserSerializer(serializers.ModelSerializer):
         response['role'] = AdminRoleSerializer(instance.role).data.get('role')
         return response
 
-    def to_internal_value(self, data):
-        return data
+    def create(self, validated_data):
+        phone = validated_data.get('phone')
+        name = validated_data.get('name')
+        password = validated_data.get('password')
+        email = validated_data.get('email')
+        image = validated_data.get('image')
+        joining_date = validated_data.get('joiningDate')
+        role = validated_data.get('role')
+        print(role)
 
-    # def create(self, validated_data):
+        user = UserProfile.objects.create_user(
+            password=password,
+            phone=phone,
+            name=name,
+            email=email,
+            image=image,
+            joiningDate=joining_date,
+            role=role
+        )
+        user.is_staff = True
+        user.save()
+
+        return user
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.email = validated_data.get('email', instance.email)
+        instance.image = validated_data.get('image', instance.image)
+        instance.role = validated_data.get('role', instance.role)
+        password = validated_data.get('password')
+
+        if password is not None:
+            instance.set_password(password)
+        instance.save()
+
+        return instance
 
 
 class UserListingField(serializers.RelatedField):
