@@ -78,8 +78,6 @@ class Product(models.Model):
     parent = models.ForeignKey(Category, on_delete=models.CASCADE)
     children = models.ForeignKey(SubCategory, on_delete=models.CASCADE, blank=True)
     SKU = models.CharField(max_length=50, blank=True, null=True)
-    # type = models.ForeignKey(Type, on_delete=models.CASCADE)
-    # tags = models.ForeignKey(Tag, on_delete=models.CASCADE)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=4, choices=STATUS_CHOICES, default='Show',)
