@@ -8,6 +8,7 @@ from .serializers import CouponSerializer
 
 @api_view(['GET', 'POST'])
 def coupons(request):
+    print(request.user)
     if request.method == 'GET':
         all_coupons = Coupons.objects.all()
         serializer = CouponSerializer(all_coupons, many=True)

@@ -1,6 +1,4 @@
-from django.contrib.auth import authenticate
 from rest_framework import serializers
-from rest_framework_simplejwt.tokens import RefreshToken
 from . models import UserProfile, Role
 
 
@@ -28,10 +26,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         instance.image = validated_data.get('image', instance.image)
         instance.address = validated_data.get('address', instance.address)
 
-        # password = validated_data.get('password')
-        #
-        # if password is not None:
-        #     instance.set_password(password)
         instance.save()
 
         return instance
@@ -102,29 +96,5 @@ class UserListingField(serializers.RelatedField):
         return data
 
 
-class LoginSerializer(serializers.Serializer):
-    phone = serializers.CharField(max_length=20, write_only=True)
-    password = serializers.CharField(max_length=100, write_only=True)
-    user = UserListingField(read_only=True)
-    refresh = serializers.CharField(max_length=300, read_only=True)
-    access = serializers.CharField(max_length=300, read_only=True)
 
-    def validate(self, data):
-        phone = data.get('phone')
-        password = data.get('password')
-
-        if phone and password:
-            user = authenticate(phone=phone, password=password)
-            if user is not None:
-                data['user'] = user
-                refresh = RefreshToken.for_user(user)
-                data['refresh'] = str(refresh)
-                data['access'] = str(refresh.access_token)
-            else:
-                msg = 'Unable to log in with provided credentials.'
-                raise serializers.ValidationError(msg, code='authorization')
-        else:
-            msg = 'provide both credentials'
-            raise serializers.ValidationError(msg, code='authorization')
-        return data
 
