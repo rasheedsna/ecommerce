@@ -1,15 +1,7 @@
 import uuid
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.models import Group, PermissionsMixin
 from django.db import models
-from django.utils import timezone
-
-
-class Role(models.Model):
-    role = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.role
 
 
 class UserManager(BaseUserManager):
@@ -42,7 +34,6 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     createdAt = models.DateTimeField(auto_now_add=True)
     joiningDate = models.DateTimeField(blank=True, null=True)
     address = models.CharField(max_length=250, blank=True, null=True)
-    role = models.ForeignKey(Role, on_delete=models.CASCADE, related_name='users', null=True, blank=True)
 
     objects = UserManager()
 
