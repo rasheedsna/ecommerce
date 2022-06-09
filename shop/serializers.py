@@ -69,6 +69,7 @@ class CategorySerializer(serializers.ModelSerializer):
             sub_categories = SubCategory.objects.filter(parent=instance)
             for sub_cat in sub_categories:
                 sub_cat.delete()
+
             for item in children:
                 sub_category = SubCategory.objects.create(
                     children=item,
@@ -133,10 +134,10 @@ class ProductSerializer(serializers.ModelSerializer):
 
         if tags is not None:
             for item in tags:
-                if Tag.objects.filter(tag=item).exists():
+                try:
                     tag = Tag.objects.get(tag=item)
                     tag.product.add(product)
-                else:
+                except ObjectDoesNotExist:
                     tag = Tag.objects.create(
                         tag=item,
                     )
@@ -160,14 +161,15 @@ class ProductSerializer(serializers.ModelSerializer):
 
         tags = validated_data.get('tags')
 
-        for item in tags:
-            if Tag.objects.filter(tag=item).exists():
-                tag = Tag.objects.get(tag=item)
+        if tags is not None:
+            for item in tags:
+                try:
+                    tag = Tag.objects.get(tag=item)
+                    tag.product.add(instance)
+                except ObjectDoesNotExist:
+                    tag = Tag.objects.create(
+                        tag=item,
+                    )
+                tag.save()
                 tag.product.add(instance)
-            else:
-                tag = Tag.objects.create(
-                    tag=item,
-                )
-            tag.save()
-            tag.product.add(instance)
         return instance

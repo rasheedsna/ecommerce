@@ -3,8 +3,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from . models import Category, Product
-from . serializers import ProductSerializer, CategorySerializer
+from .models import Category, Product
+from .serializers import ProductSerializer, CategorySerializer
+from .permissions import AuthorisedEditOnly
 
 
 class AllCategories(APIView):
@@ -71,6 +72,8 @@ class AllProducts(APIView):
 
 
 class EditProduct(APIView):
+    permission_classes = [AuthorisedEditOnly]
+
     def get(self, request, product_id):
         try:
             product = Product.objects.get(_id=product_id)

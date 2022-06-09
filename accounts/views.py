@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -27,13 +28,19 @@ class EditUserAccounts(APIView):
     permission_classes = [AuthenticatedUserOrAdminViewOnly]
 
     def get(self, request, user_id):
-        user = UserProfile.objects.get(_id=user_id, is_staff=False)
-        serializer = UserProfileSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            user = UserProfile.objects.get(_id=user_id, is_staff=False)
+            serializer = UserProfileSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response({'msg': 'requested resources does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
     def patch(self, request, user_id):
-        user = UserProfile.objects.get(_id=user_id)
-        serializer = UserProfileSerializer(user, data=request.data, partial=True)
+        try:
+            user = UserProfile.objects.get(_id=user_id)
+            serializer = UserProfileSerializer(user, data=request.data, partial=True)
+        except ObjectDoesNotExist:
+            return Response({'msg': 'requested resources does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
         if serializer.is_valid():
             serializer.save()
@@ -42,10 +49,13 @@ class EditUserAccounts(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, user_id):
-        user = UserProfile.objects.get(_id=user_id)
-        user.is_active = False
-        user.save()
-        return Response({'msg': 'this account has been deactivated'}, status=status.HTTP_204_NO_CONTENT)
+        try:
+            user = UserProfile.objects.get(_id=user_id)
+            user.is_active = False
+            user.save()
+            return Response({'msg': 'this account has been deactivated'}, status=status.HTTP_204_NO_CONTENT)
+        except ObjectDoesNotExist:
+            return Response({'msg': 'requested resources does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class AdminAccounts(APIView):
@@ -68,13 +78,19 @@ class EditAdminUserAccounts(APIView):
     permission_classes = [AuthenticatedAdminUserOrAdminViewOnly]
 
     def get(self, request, user_id):
-        user = UserProfile.objects.get(_id=user_id, is_staff=True)
-        serializer = AdminUserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            user = UserProfile.objects.get(_id=user_id, is_staff=True)
+            serializer = AdminUserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response({'msg': 'requested resources does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
     def patch(self, request, user_id):
-        user = UserProfile.objects.get(_id=user_id, is_staff=True)
-        serializer = AdminUserSerializer(user, data=request.data, partial=True)
+        try:
+            user = UserProfile.objects.get(_id=user_id, is_staff=True)
+            serializer = AdminUserSerializer(user, data=request.data, partial=True)
+        except ObjectDoesNotExist:
+            return Response({'msg': 'requested resources does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
         if serializer.is_valid():
             serializer.save()
@@ -83,9 +99,12 @@ class EditAdminUserAccounts(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, user_id):
-        user = UserProfile.objects.get(_id=user_id)
-        user.is_active = False
-        user.save()
-        return Response({'msg': 'this account has been deactivated'}, status=status.HTTP_204_NO_CONTENT)
+        try:
+            user = UserProfile.objects.get(_id=user_id)
+            user.is_active = False
+            user.save()
+            return Response({'msg': 'this account has been deactivated'}, status=status.HTTP_204_NO_CONTENT)
+        except ObjectDoesNotExist:
+            return Response({'msg': 'requested resources does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 

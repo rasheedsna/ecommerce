@@ -61,7 +61,7 @@ class OrderSerializer(serializers.ModelSerializer):
         return order
 
     def update(self, instance, validated_data):
-        instance.status = validated_data('status', instance.status)
+        instance.status = validated_data.get('status', instance.status)
         instance.save()
 
         return instance
