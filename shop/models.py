@@ -85,6 +85,7 @@ class Product(models.Model):
     popular = models.BooleanField(default=False,)
     originalPrice = models.DecimalField(max_digits=10, decimal_places=2)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     flashSale = models.BooleanField(default=False, )
     slug = models.SlugField(max_length=200, unique=True)
     unit = models.CharField(max_length=50, blank=True)

@@ -13,6 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
@@ -24,7 +26,9 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('orders/', include('orders.urls')),
     path('coupons/', include('coupons.urls')),
-    path('openapi', get_schema_view(
+    path('notifications/', include('notifications.urls')),
+    path('search/', include('search.urls')),
+    path('openapi/', get_schema_view(
         title="Ecommerce Backend",
         description="API endpoints for all CRUD operations",
         version="1.0.0"
@@ -34,3 +38,7 @@ urlpatterns = [
             extra_context={'schema_url': 'openapi-schema'}
         ), name='swagger-ui'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
