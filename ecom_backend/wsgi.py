@@ -13,4 +13,11 @@ from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecom_backend.settings')
 
-application = get_wsgi_application()
+import socketio
+from notifications.views import sio
+
+django_app = get_wsgi_application()
+application = socketio.WSGIApp(sio, django_app)
+
+import eventlet.wsgi
+eventlet.wsgi.server(eventlet.listen(('', 8000)), application)
