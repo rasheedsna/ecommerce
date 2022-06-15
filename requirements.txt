@@ -20,3 +20,9 @@ sqlparse==0.4.2
 tzdata==2022.1
 uritemplate==4.1.1
 whitenoise==6.1.0
+dnspython==1.16.0
+enum-compat==0.0.3
+eventlet==0.25.2
+greenlet==0.4.16
+monotonic==1.5
+six==1.15.0
